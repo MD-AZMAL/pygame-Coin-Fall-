@@ -1,7 +1,9 @@
-from src.screen import Screen
-from src.game_enums import Game_mode
+import os
+
+from src.game_screens.screen import Screen
+from src.misc.game_enums import Game_mode
 from pygame.locals import QUIT, KEYUP, MOUSEBUTTONUP
-from src.button import Button
+from src.ui.button import Button
 
 
 class Game_over_screen(Screen):
@@ -14,6 +16,9 @@ class Game_over_screen(Screen):
         self.buttons['Back'] =      Button(pygame, res, surface, [20, 360, 300, 50], "Back")
 
     def update(self, events):
+        if not os.path.isfile("highscore.txt"):
+            with open("highscore.txt", "w") as hiscore_file:
+                hiscore_file.write("0")
         hisc=open("highscore.txt","r")
         highscore=hisc.read()
         maxscore=max(int(highscore),int(self.game_manager.score))
@@ -23,11 +28,11 @@ class Game_over_screen(Screen):
             hisc.write(str(self.game_manager.score))
         hisc.close()
 
-        textsurface = self.font.render('Game Over', True, (0, 0, 0))
-        textsurface2 = self.font2.render('Score: ' + str(self.game_manager.score), True, (0, 0, 0))
+        textsurface = self.font.render('Game Over', True, self.res.WHITE)
+        textsurface2 = self.font2.render('Score: ' + str(self.game_manager.score), True, self.res.WHITE)
 
-        textsurface3 = self.font2.render('HighScore: ' + str(maxscore), True, (0, 0, 0))
-        self.surface.fill(self.res.BGCOLOR)
+        textsurface3 = self.font2.render('HighScore: ' + str(maxscore), True, self.res.WHITE)
+        self.surface.blit(self.res.EBG,(0,0))
         self.surface.blit(textsurface, (20, 0))
         self.surface.blit(textsurface2, (20, 100))
         self.surface.blit(textsurface3, (20, 150))
